@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>地址标注工具V1.0</title>
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1>地址标注工具V1.0</h1>
+        <a href="javascript:;" class="toggle-menu" tabindex="-1"><i class="fa fa-bars"></i></a>
+    </header>
+    <div id="aside">
+        <button class="btn btn-default" id="import-txt-btn" tabindex="-1">初始化导入txt</button>
+        <button class="btn btn-primary" id="import-json-btn" tabindex="-1">导入json</button>
+        <button class="btn btn-danger" id="export-json-btn" tabindex="-1">导出json</button>
+        <input type="file" id="txt-upload" tabindex="-1" style="position: absolute;left:-9999px">
+        <input type="file" id="json-upload" tabindex="-1" style="position: absolute;left:-9999px">
+        <hr>
+        <table id="candidates" class="table table-bordered table-condensed">
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <section class="instruction">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <p>
+                                <kbd>1</kbd> -
+                                <kbd>9</kbd> 切词快捷键</p>
+                            <p>
+                                <kbd>backspace</kbd> 撤销上一次切词操作</p>
+                            <p>
+                                <kbd>tab</kbd> 切换标签选择框
+                            </p>
+                            <p>
+                                <kbd>←</kbd>
+                                <kbd>→</kbd> 前后切换标签选择框
+                            </p>
+                            <p>
+                                <kbd>m</kbd> 切换菜单
+                            </p>
+                            <p>
+                                <kbd>`</kbd> 重置
+                                <kbd>enter</kbd> 提交
+                            </p>
+                        </div>
+                        <div class="col-xs-4">
+                            <p>
+                                <kbd>q</kbd> 省／直辖市 <small>L1</small></p>
+                            <p>
+                                <kbd>w</kbd> 省会／地级市 <small>L2</small></p>
+                            <p>
+                                <kbd>e</kbd> 区／县 <small>L3</small></p>
+                            <p>
+                                <kbd>r</kbd> 街道／乡／镇 <small>L4</small></p>
+                            <p>
+                                <kbd>t</kbd> 道路／片区 <small>L5</small></p>
+                            <p>
+                                <kbd>y</kbd> 路号／村组 <small>L6</small></p>
+                        </div>
+                        <div class="col-xs-4">
+                            <p>
+                                <kbd>u</kbd> 楼／座／区／排 <small>L7</small></p>
+                            <p>
+                                <kbd>i</kbd> 单元／栋 <small>L8</small></p>
+                            <p>
+                                <kbd>o</kbd> 门牌 <small>L9</small></p>
+                            <p>
+                                <kbd>p</kbd> POI <small>POI</small></p>
+                            <p>
+                                <kbd>[</kbd> 方位描述 <small>DIR</small></p>
+                            <p>
+                                <kbd>]</kbd> 补充说明 <small>INS</small></p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="col-sm-12">
+                <ul id="words"></ul>
+                <ul id="tagger"></ul>
+                <pre id="preview" style="display: none;"></pre>
+                <div class="focus-guard-start" tabindex="1"></div>
+                <div class="focus-guard-end" tabindex="14"></div>
+                <div class="btn-bar">
+                    <button class="btn btn-danger" id="reset-btn" tabindex="-1">重置</button>
+                    <button class="btn btn-primary" id="confirm-btn" tabindex="-1">提交</button>
+                    <button class="btn btn-default" id="correct-btn" tabindex="-1">纠正</button>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="corrector" style="display: none;">
+            <div class="col-sm-4 col-sm-offset-4">
+                <div class="input-group">
+                    <input id="correct-input" type="text" class="form-control" placeholder="正确地址" tabindex="-1">
+                    <span class="input-group-btn"><button class="btn btn-success" type="button" id="correct-confirm"><i class="fa fa-check"></i></button></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="http://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="http://cdn.bootcss.com/lodash.js/4.17.4/lodash.min.js"></script>
+    <script>
+    var OPTION = {
+        tags: [{
+            value: 'L1',
+            label: '省／直辖市'
+        }, {
+            value: 'L2',
+            label: '省会／地级市'
+        }, {
+            value: 'L3',
+            label: '区／县'
+        }, {
+            value: 'L4',
+            label: '街道／乡／镇'
+        }, {
+            value: 'L5',
+            label: '道路／片区'
+        }, {
+            value: 'L6',
+            label: '路号／村组'
+        }, {
+            value: 'L7',
+            label: '楼／座／区／排'
+        }, {
+            value: 'L8',
+            label: '单元／栋'
+        }, {
+            value: 'L9',
+            label: '门牌'
+        }, {
+            value: 'POI',
+            label: 'POI'
+        }, {
+            value: 'DIR',
+            label: '方位描述'
+        }, {
+            value: 'INS',
+            label: '补充说明'
+        }]
+    };
+    var STATE = {
+        editingAddress: ''
+    };
+    //加载LocalStorage
+    loadFileStorage();
+    //菜单Toggle
+    $('.toggle-menu').click(function() {
+        $('#aside').toggleClass('active');
+        $('.container').toggleClass('menu-out');
+    });
+
+    $('#words').on('click', '.divider', function() {
+        $(this).toggleClass('active');
+        generateTagger();
+        previewTaggingResult();
+        if (!$('#words>.divider.active').size()) {
+            $('#preview').hide();
+        }
+    });
+    $('#preview-btn').click(function() {
+        previewTaggingResult();
+    });
+    $('#reset-btn').click(function() {
+        reset();
+    });
+    $('#confirm-btn').click(function() {
+        submitTaggingResult(STATE.editingAddress);
+    });
+    $('#correct-btn').click(function() {
+        $('#corrector').fadeToggle();
+        $('#correct-input').val(STATE.editingAddress);
+    });
+    $('#correct-confirm').click(function() {
+        $('#corrector').fadeOut();
+        var originalAddress = STATE.editingAddress;
+        var correctedAddress = $('#correct-input').val();
+        console.log(originalAddress, correctedAddress);
+        saveCorrectedAddressToStorage(originalAddress, correctedAddress);
+        STATE.editingAddress = correctedAddress;
+        reset();
+    });
+    $('#import-txt-btn').click(function() {
+        $('#txt-upload').trigger('click');
+    });
+    $('#import-json-btn').click(function() {
+        $('#json-upload').trigger('click');
+    });
+    $('#export-json-btn').click(function() {
+        exportJson();
+    });
+
+    $('#tagger').on('change', 'select', function() {
+        previewTaggingResult();
+    });
+    $('#candidates').on('click', 'td', function() {
+        $(this).parent().siblings().find('td').removeClass('editing');
+        $(this).addClass('editing');
+        var address = $(this).text();
+        STATE.editingAddress = address;
+        loadAddressAndTagger(address);
+    });
+    //popover
+    $('#candidates').popover({
+        container: 'body',
+        selector: 'td',
+        html: true,
+        content: function() {
+            var text = $(this).text();
+            var addresses = JSON.parse(window.localStorage.getItem('addresses'));
+            var address = _.find(addresses, function(addr) {
+                return addr.original_address == text || addr.corrected_address == text;
+            });
+            return '<pre>' + prettifyAddressJson(JSON.stringify(address)) + '</pre>';
+        },
+        trigger: 'hover'
+    });
+
+    function taggingKeyEventHandler(e) {
+        if (e.target.tagName === 'INPUT') {
+            e.preventDefault();
+            return;
+        }
+        if (e.keyCode >= 49 && e.keyCode <= 57) {
+            //1-9
+            var pressedNum = e.keyCode - 48;
+            var dividerLeft = $('#words>.divider.active').last().nextAll('.divider').size();
+            var wordsLeft = dividerLeft ? dividerLeft + 1 : 0 || $('#words li.char').size();
+            if (pressedNum < wordsLeft) {
+                if (wordsLeft === $('#words li.char').size()) {
+                    $('#words>.divider').eq(pressedNum - 1).addClass('active');
+                } else {
+                    $('#words>.divider.active').last().nextAll('.divider').eq(pressedNum - 1).addClass('active');
+                }
+                generateTagger();
+                previewTaggingResult();
+
+            }
+        }
+        if (e.keyCode === 8) {
+            //Backspace
+            $('#words>.divider.active').last().removeClass('active');
+            generateTagger();
+            previewTaggingResult();
+            if (!$('#words>.divider.active').size()) {
+                $('#preview').hide();
+            }
+        }
+        var selectKeyMap = {
+                81: 0,
+                87: 1,
+                69: 2,
+                82: 3,
+                84: 4,
+                89: 5,
+                85: 6,
+                73: 7,
+                79: 8,
+                80: 9,
+                219: 10,
+                221: 11
+            } //qwertyuiop[] 映射 0-11 选择标签
+        if (Object.keys(selectKeyMap).indexOf(e.keyCode.toString()) !== -1) {
+            $('#tagger select:focus option').eq(parseInt(selectKeyMap[e.keyCode.toString()])).prop('selected', true);
+            var nextTabElemIndex = parseInt($('#tagger select:focus').attr('tabindex')) + 1;
+            $('[tabindex="' + nextTabElemIndex + '"]').focus();
+            previewTaggingResult();
+
+        }
+        if (e.keyCode === 13) {
+            //回车
+            submitTaggingResult(STATE.editingAddress);
+        }
+        if (e.keyCode === 192) {
+            //`
+            reset();
+        }
+        if (e.keyCode === 77) {
+            //m
+            $('#aside').toggleClass('active');
+            $('.container').toggleClass('menu-out');
+        }
+        if (e.keyCode === 37) {
+            //左
+            var prevTabElemIndex = parseInt($('#tagger select:focus').attr('tabindex')) - 1;
+            $('[tabindex="' + prevTabElemIndex + '"]').focus();
+        }
+        if (e.keyCode === 39) {
+            //右
+            var nextTabElemIndex = parseInt($('#tagger select:focus').attr('tabindex')) + 1;
+            $('[tabindex="' + nextTabElemIndex + '"]').focus();
+        }
+    }
+    $(document).on('keyup', taggingKeyEventHandler);
+
+    //初始化地址
+    function initAddress(address) {
+        $('#words').empty();
+        var charArr = address.split('');
+        var wordsHtml = [];
+        $.each(charArr, function(i, word) {
+            var html = '<li class="char">' + word + '</li>';
+            if (i < charArr.length - 1) {
+                html += '<li class="divider"></li>';
+            }
+            wordsHtml.push(html);
+        })
+        $('#words').append(wordsHtml.join(''));
+    }
+    //加载地址及标签选择
+    function loadAddressAndTagger(address) {
+        var addresses = JSON.parse(window.localStorage.getItem('addresses'));
+        var addr = _.find(addresses, function(addr) {
+            return addr.original_address == address || addr.corrected_address == address;
+        });
+        initAddress(address);
+        reset();
+        if (addr.tags.length) {
+            var count = 0;
+            $.each(addr.segmentation, function(i, e) {
+                count += e.length;
+                $('#words .divider').eq(count - 1).addClass('active');
+            });
+            generateTagger();
+            $.each(addr.tags, function(i, e) {
+                $('#tagger select').eq(i).find('option[value="' + e + '"]').prop('selected', true);
+            });
+            previewTaggingResult();
+        }
+    }
+
+    function getSegementation() {
+        var currentWord = '';
+        var segmentation = [];
+        $('#words>li').each(function(i) {
+            if ($(this).is('.char')) {
+                currentWord += $(this).text();
+            }
+            if ($(this).is('.divider.active')) {
+                segmentation.push(currentWord);
+                currentWord = '';
+            }
+            if (i === $('#words>li').size() - 1) {
+                segmentation.push(currentWord);
+            }
+        });
+        return segmentation;
+    }
+
+    function generateTagger() {
+        var tags = OPTION.tags;
+        var segmentation = getSegementation();
+        if (segmentation.length < 2) {
+            $('#tagger').empty();
+            return;
+        }
+        var options = tags.map(function(e, idx) {
+            if (idx === 0) {
+                return '<option value="' + e.value + '" selected>' + e.label + '</option>'
+            } else {
+                return '<option value="' + e.value + '">' + e.label + '</option>'
+            }
+        });
+        var select = $('<li class="select"><select class="form-control">' + options + '</select></li>');
+        var divider = $('<li class="divider"></li>');
+        var unitWidth = $('#words>li.char').eq(0).width();
+        var dividerWidth = $('#words>li.divider').eq(0).width();
+        $('#tagger').empty();
+        $.each(segmentation, function(i, e) {
+            var newSelect = select.clone();
+            newSelect.width(function() {
+                return unitWidth * e.length + dividerWidth * (e.length - 1);
+            });
+            newSelect.find('select').attr('tabindex', i + 2);
+            $('#tagger').append(newSelect);
+            if (i < segmentation.length - 1) {
+                $('#tagger').append(divider.clone());
+            }
+        })
+    }
+
+    function previewTaggingResult() {
+        var segmentation = getSegementation();
+        var tags = []
+        $('#tagger select').each(function() {
+            tags.push($(this).val());
+        });
+        $('#preview').html(JSON.stringify(segmentation) + '\n' + JSON.stringify(tags)).show();
+    }
+
+    function submitTaggingResult(originalAddress) {
+        var addresses = JSON.parse(window.localStorage.getItem('addresses'));
+        if (!STATE.editingAddress) {
+            return;
+        }
+        var segmentation = getSegementation();
+        var tags = []
+        $('#tagger select').each(function() {
+            tags.push($(this).val());
+        });
+        if(!tags.length){
+        	return;
+        }
+        var index = _.indexOf(addresses, _.find(addresses, {
+            original_address: originalAddress
+        }));
+        addresses.splice(index, 1, {
+            original_address: originalAddress,
+            corrected_address: '',
+            tags: tags,
+            segmentation: segmentation
+        });
+        window.localStorage.setItem('addresses', JSON.stringify(addresses));
+        setTimeout(function() {
+            loadFileStorage();
+            reset();
+        }, 100);
+    }
+
+    function reset() {
+        $('#words>.divider').removeClass('active');
+        $('#tagger').empty();
+        $('#preview').hide();
+        $('#corrector').hide();
+        $('#correct-input').val('');
+    }
+    $('.focus-guard-start').on('focus', function() {
+        $('#tagger select').eq(0).focus();
+    });
+
+    $('.focus-guard-end').on('focus', function() {
+        $('#tagger select').eq(0).focus();
+    });
+
+    window.onload = function() {
+        //上传txt
+        var fileInput = document.getElementById('txt-upload');
+
+        fileInput.addEventListener('change', function(e) {
+            var file = fileInput.files[0];
+            var textType = /text.*/;
+
+            if (file.type.match(textType)) {
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    saveFileStorage(reader.result);
+                    loadFileStorage();
+                    reset();
+                }
+                reader.readAsText(file);
+            } else {
+                alert("格式不支持!");
+            }
+        });
+        //上传json
+        var jsonInput = document.getElementById('json-upload');
+
+        jsonInput.addEventListener('change', function(e) {
+            var file = jsonInput.files[0];
+
+            if (file.type === 'application/json') {
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    saveJsonStorage(reader.result);
+                    loadFileStorage();
+                    reset();
+                }
+                reader.readAsText(file);
+            } else {
+                alert("格式不支持!");
+            }
+        });
+    }
+
+    function saveJsonStorage(json) {
+        window.localStorage.setItem('addresses', json);
+    }
+
+    function saveFileStorage(file) {
+        var arr = file.split('\n');
+        var addresses = [];
+        $.each(arr, function(i, e) {
+            addresses.push({
+                'original_address': e,
+                'corrected_address': '',
+                'segmentation': [],
+                'tags': []
+            });
+        });
+        window.localStorage.setItem('addresses', JSON.stringify(addresses));
+    }
+    //纠正地址写入
+    function saveCorrectedAddressToStorage(originalAddress, correctedAddress) {
+        var addresses = JSON.parse(window.localStorage.getItem('addresses'));
+        var index = _.indexOf(addresses, _.find(addresses, {
+            original_address: originalAddress
+        }));
+        addresses.splice(index, 1, {
+            original_address: originalAddress,
+            corrected_address: correctedAddress,
+            tags: [],
+            segmentation: []
+        });
+        window.localStorage.setItem('addresses', JSON.stringify(addresses));
+    }
+    //加载缓存
+    function loadFileStorage() {
+        var addresses = JSON.parse(window.localStorage.getItem('addresses'));
+        if (!addresses || !addresses.length) {
+            return;
+        }
+        $('#candidates tbody').empty();
+        $.each(addresses, function(i, e) {
+            var addr = e.corrected_address ? e.corrected_address : e.original_address;
+            if (e.tags.length) {
+                $('#candidates tbody').append('<tr><td class="tagged">' + addr + '</td></tr>');
+            } else {
+                $('#candidates tbody').append('<tr><td>' + addr + '</td></tr>');
+            }
+        });
+        var lastUntaggedAddress = _.find(addresses, function(x) {
+            return !x.tags.length
+        });
+        var currentIndex = _.indexOf(addresses, _.find(addresses, {
+            original_address: lastUntaggedAddress.original_address
+        }));
+        $('#candidates tbody tr').eq(currentIndex).find('td').addClass('editing');
+        initAddress(lastUntaggedAddress.original_address);
+        STATE.editingAddress = lastUntaggedAddress.original_address;
+    }
+
+    //导出JSON
+    function exportJson() {
+        var addressesJson = window.localStorage.getItem('addresses');
+        addressesJson = prettifyAddressJson(addressesJson);
+        var blob = new Blob([addressesJson], {
+            type: 'application/json'
+        });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.download = "addresses.json";
+        a.href = url;
+        var evt = document.createEvent('MouseEvents');
+        evt.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+        a.dispatchEvent(evt);
+    }
+
+    function prettifyAddressJson(json) {
+        return JSON.stringify(JSON.parse(json), function(k, v) {
+                if (k === "tags" || k === "segmentation") {
+                    return JSON.stringify(v);
+                }
+                return v;
+            }, 2).replace(/\\/g, '')
+            .replace(/\"\[/g, '[')
+            .replace(/\]\"/g, ']')
+            .replace(/\"\{/g, '{')
+            .replace(/\}\"/g, '}');
+    }
+    </script>
+</body>
+
+</html>

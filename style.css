@@ -1,0 +1,157 @@
+    html,
+    body {
+        overflow-x: hidden;
+    }
+    
+    header {
+        background: #399;
+        padding: 15px 0;
+        overflow: hidden;
+        margin: 0;
+    }
+    
+    header h1 {
+        vertical-align: middle;
+        text-align: center;
+        font-size: 1.5em;
+        line-height: 30px;
+        color: #fff;
+        margin: 0;
+    }
+    
+    .toggle-menu i {
+        font-size: 2em;
+        color: #fff;
+        line-height: 40px;
+    }
+    
+    .toggle-menu {
+        width: 40px;
+        height: 40px;
+        display: inline-block;
+        vertical-align: middle;
+        position: relative;
+        text-align: center;
+        overflow: hidden;
+        cursor: pointer;
+        position: fixed;
+        outline: none;
+        z-index: 2;
+        left: 10px;
+        top: 10px;
+    }
+    .instruction small{
+        color: #bbb;
+    }
+    #aside {
+        position: fixed;
+        top: 60px;
+        left: 0;
+        z-index: 2;
+        width: 500px;
+        height: calc(100% - 60px);
+        background-color: #fff;
+        padding: 20px;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        -webkit-transform: translate3d(0, 0, 0) translateX(-500px);
+        transform: translate3d(0, 0, 0) translateX(-500px);
+        -webkit-transition: all 0.25s cubic-bezier(0.16, 0.63, 0.45, 0.98);
+        transition: all 0.25s cubic-bezier(0.16, 0.63, 0.45, 0.98);
+        box-shadow: 4px 0 4px rgba(0, 0, 0, 0.2);
+        background-color: #fff;
+    }
+    #candidates td{
+        cursor:pointer;
+    }
+    #candidates .tagged{
+        background-color: #E4F7BC;
+    }
+    #candidates .editing{
+        background-color: #F7E4D9 !important;
+    }
+    #aside.active {
+        -webkit-transform: translate3d(0, 0, 0) translateX(0);
+        transform: translate3d(0, 0, 0) translateX(0);
+    }
+    
+    .container {
+        padding: 40px 20px 0 20px;
+        width: 100%;
+        text-align: center;
+        transition: all 0.25s cubic-bezier(0.16, 0.63, 0.45, 0.98);
+    }
+    .container.menu-out{
+        width: calc(100% - 500px);
+        margin-left: 500px;
+    }
+    .instruction {
+        text-align: left;
+        display: block;
+        padding: 10px;
+        margin: 20px 0;
+        font-size: 13px;
+        line-height: 1.42857143;
+        color: #333;
+        word-break: break-all;
+        word-wrap: break-word;
+        background-color: #f5f5f5;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    
+    h2 {
+        margin-bottom: 40px;
+        text-align: center;
+    }
+    
+    .btn-bar {
+        margin: 20px 0;
+    }
+    
+    #words {
+        list-style: none;
+        display: flex;
+        align-items: center;
+        height: 80px;
+    }
+    
+    #words li.divider {
+        background-color: #f8f8f8;
+        width: 8px;
+        height: 80px;
+    }
+    
+    #words li.divider:hover {
+        background-color: #ccc;
+        cursor: pointer;
+    }
+    
+    #words li.divider.active {
+        background-color: #F75743;
+        cursor: pointer;
+    }
+    
+    #words li.char {
+        flex: 1;
+        text-align: center;
+        font-size: 1.5vw;
+        color: #444;
+    }
+    
+    #tagger {
+        list-style: none;
+        display: flex;
+    }
+    
+    #tagger li.divider {
+        width: 8px;
+    }
+    .popover{
+        display: inline-block;
+        max-width: 100%;
+    }
+    .popover pre{
+        background-color: #fff;
+        border: none;
+    }
