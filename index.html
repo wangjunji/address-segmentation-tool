@@ -3,17 +3,17 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>地址标注工具V1.0</title>
+    <title>地址标注工具V1.2</title>
     <link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="http://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-	<link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
     <header>
-        <h1>地址标注工具V1.0</h1>
+        <h1>地址标注工具V1.2</h1>
         <a href="javascript:;" class="toggle-menu" tabindex="-1"><i class="fa fa-bars"></i></a>
     </header>
     <div id="aside">
@@ -32,12 +32,14 @@
             <div class="col-sm-12">
                 <section class="instruction">
                     <div class="row">
-                        <div class="col-xs-4">
+                        <div class="col-xs-2">
                             <p>
                                 <kbd>1</kbd> -
-                                <kbd>9</kbd> 切词快捷键</p>
+                                <kbd>9</kbd> 切词快捷键
+                            </p>
                             <p>
-                                <kbd>backspace</kbd> 撤销上一次切词操作</p>
+                                <kbd>backspace</kbd> 撤销上一次切词操作
+                            </p>
                             <p>
                                 <kbd>tab</kbd> 切换标签选择框
                             </p>
@@ -46,40 +48,124 @@
                                 <kbd>→</kbd> 前后切换标签选择框
                             </p>
                             <p>
-                                <kbd>m</kbd> 切换菜单
+                                <kbd>`</kbd> 切换菜单
                             </p>
                             <p>
-                                <kbd>`</kbd> 重置
+                                <kbd>esc</kbd> 重置
+                            </p>
+                            <p>
                                 <kbd>enter</kbd> 提交
                             </p>
                         </div>
-                        <div class="col-xs-4">
+                        <div class="col-xs-2">
                             <p>
-                                <kbd>q</kbd> 省／直辖市 <small>L1</small></p>
+                                <kbd>q</kbd> 省 <small>L1</small>
+                            </p>
                             <p>
-                                <kbd>w</kbd> 省会／地级市 <small>L2</small></p>
+                                <kbd>w</kbd> 市 <small>L2</small>
+                            </p>
                             <p>
-                                <kbd>e</kbd> 区／县 <small>L3</small></p>
+                                <kbd>e</kbd> 区／县 <small>L3</small>
+                            </p>
                             <p>
-                                <kbd>r</kbd> 街道／乡／镇 <small>L4</small></p>
+                                <kbd class="disabled">&nbsp;</kbd> 开发区／工业区 <small>L4</small>
+                            </p>
                             <p>
-                                <kbd>t</kbd> 道路／片区 <small>L5</small></p>
+                                <kbd>r</kbd> 乡／镇／街道 <small>L5</small>
+                            </p>
                             <p>
-                                <kbd>y</kbd> 路号／村组 <small>L6</small></p>
+                                <kbd>t</kbd> 村／社区／居委会 <small>L6</small>
+                            </p>
+                            <p>
+                                <kbd>y</kbd> 商圈 <small>L7</small>
+                            </p>
                         </div>
-                        <div class="col-xs-4">
+                        <div class="col-xs-2">
                             <p>
-                                <kbd>u</kbd> 楼／座／区／排 <small>L7</small></p>
+                                <kbd>u</kbd> 主路 <small>L8</small>
+                            </p>
                             <p>
-                                <kbd>i</kbd> 单元／栋 <small>L8</small></p>
+                                <kbd>i</kbd> 支路／弄 <small>L9</small>
+                            </p>
                             <p>
-                                <kbd>o</kbd> 门牌 <small>L9</small></p>
+                                <kbd>o</kbd> 门牌号 <small>L10</small>
+                            </p>
                             <p>
-                                <kbd>p</kbd> POI <small>POI</small></p>
+                                <kbd>p</kbd> 楼栋 <small>L11</small>
+                            </p>
                             <p>
-                                <kbd>[</kbd> 方位描述 <small>DIR</small></p>
+                                <kbd class="disabled">&nbsp;</kbd> 单元 <small>L12</small>
+                            </p>
                             <p>
-                                <kbd>]</kbd> 补充说明 <small>INS</small></p>
+                                <kbd>[</kbd> 层 <small>L13</small>
+                            </p>
+                            <p>
+                                <kbd>]</kbd> 房／室 <small>L14</small>
+                            </p>
+                        </div>
+                        <div class="col-xs-2">
+                            <p>
+                                <kbd>a</kbd> 企业单位 <small>P-ORG</small>
+                            </p>
+                            <p>
+                                <kbd>s</kbd> 教育学校 <small>P-EDU</small>
+                            </p>
+                            <p>
+                                <kbd>d</kbd> 医疗保健 <small>P-HOS</small>
+                            </p>
+                            <p>
+                                <kbd>f</kbd> 住宅小区 <small>P-HOU</small>
+                            </p>
+                            <p>
+                                <kbd>g</kbd> 商务楼宇 <small>P-BUI</small>
+                            </p>
+                            <p>
+                                <kbd>h</kbd> 购物商场 <small>P-MAL</small>
+                            </p>
+                            <p>
+                                <kbd>j</kbd> 住宿酒店 <small>P-HOT</small>
+                            </p>
+                            <p>
+                                <kbd>k</kbd> 公共设施 <small>P-PUB</small>
+                            </p>
+                            <p>
+                                <kbd>l</kbd> 店铺门面 <small>P-SHO</small>
+                            </p>
+                            <p>
+                                <kbd>;</kbd> 附属POI <small>P-SUB</small>
+                            </p>
+                            <p>
+                                <kbd>'</kbd> 其他POI <small>P-O</small>
+                            </p>
+                        </div>
+                        <div class="col-xs-2">
+                            <p>
+                                <kbd>z</kbd> 方位描述前缀 <small>D-DP</small>
+                            </p>
+                            <p>
+                                <kbd>x</kbd> 方位描述后缀 <small>D-DS</small>
+                            </p>
+                            <p>
+                                <kbd>c</kbd> 交叉路口 <small>D-COR</small>
+                            </p>
+                            <p>
+                                <kbd>v</kbd> 送件时间描述 <small>D-T</small>
+                            </p>
+                            <p>
+                                <kbd>b</kbd> 送件要求描述 <small>D-REQ</small>
+                            </p>
+                            <p>
+                                <kbd>n</kbd> 补充描述路名 <small>D-RD</small>
+                            </p>
+                            <p>
+                                <kbd>m</kbd> 补充描述POI <small>D-POI</small>
+                            </p>
+                            <p>
+                                <kbd>,</kbd> 其他描述 <small>D-O</small>
+                            </p>
+                            <p>
+                                <kbd>/</kbd> 分隔字符 <small>SEP</small>
+                            </p>
                         </div>
                     </div>
                 </section>
@@ -89,7 +175,7 @@
                 <ul id="tagger"></ul>
                 <pre id="preview" style="display: none;"></pre>
                 <div class="focus-guard-start" tabindex="1"></div>
-                <div class="focus-guard-end" tabindex="14"></div>
+                <div class="focus-guard-end" tabindex="99"></div>
                 <div class="btn-bar">
                     <button class="btn btn-danger" id="reset-btn" tabindex="-1">重置</button>
                     <button class="btn btn-primary" id="confirm-btn" tabindex="-1">提交</button>
@@ -109,6 +195,8 @@
     <script src="http://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
     <script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="http://cdn.bootcss.com/lodash.js/4.17.4/lodash.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/keycode.js"></script>
     <script src="js/main.js"></script>
 </body>
 

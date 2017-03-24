@@ -4,6 +4,8 @@
     }
     
     header {
+        width: 100%;
+        position: fixed;
         background: #399;
         padding: 15px 0;
         overflow: hidden;
@@ -76,7 +78,7 @@
     }
     
     .container {
-        padding: 40px 20px 0 20px;
+        padding: 60px 20px 0 20px;
         width: 100%;
         text-align: center;
         transition: all 0.25s cubic-bezier(0.16, 0.63, 0.45, 0.98);
@@ -99,7 +101,9 @@
         border: 1px solid #ccc;
         border-radius: 4px;
     }
-    
+    kbd.disabled{
+        background-color: #fff;
+    }
     h2 {
         margin-bottom: 40px;
         text-align: center;
