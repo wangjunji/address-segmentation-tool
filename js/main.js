@@ -1,5 +1,5 @@
 var STATE = {
-    editingAddress: ''
+    editingAddress: {}
 };
 //加载LocalStorage
 loadFileStorage();
@@ -26,21 +26,21 @@ $('#confirm-btn').click(function() {
     submitTaggingResult(STATE.editingAddress);
 });
 $('#correct-btn').click(function() {
-    if (!STATE.editingAddress) {
+    if (_.isEmpty(STATE.editingAddress)) {
         return false;
     }
     $('#corrector').fadeToggle();
-    $('#correct-input').val(STATE.editingAddress);
+    $('#correct-input').val(STATE.editingAddress.original_address);
 });
 $('#correct-confirm').click(function() {
     $('#corrector').fadeOut();
     var originalAddress = STATE.editingAddress;
-    var correctedAddress = $('#correct-input').val();
-    saveCorrectedAddressToStorage(originalAddress, correctedAddress);
+    var correctedAddressValue = $('#correct-input').val();
+    var correctedAddress = saveCorrectedAddressToStorage(originalAddress, correctedAddressValue);
     STATE.editingAddress = correctedAddress;
     reset();
     loadAddressAndTagger(correctedAddress);
-    $('#candidates td.editing').html(correctedAddress);
+    $('#candidates td.editing').html(correctedAddressValue);
 });
 $('#import-txt-btn').click(function() {
     $('#txt-upload').trigger('click');
@@ -58,7 +58,10 @@ $('#tagger').on('change', 'select', function() {
 $('#candidates').on('click', 'td', function() {
     $(this).parent().siblings().find('td').removeClass('editing');
     $(this).addClass('editing');
-    var address = $(this).text();
+    var id = $(this).data('id');
+    var addresses = JSON.parse(window.localStorage.getItem('addresses'));
+    var address = _.find(addresses, function(addr) {
+        return addr.id == id });
     STATE.editingAddress = address;
     loadAddressAndTagger(address);
 });
@@ -68,13 +71,11 @@ $('#candidates').popover({
     selector: 'td',
     html: true,
     content: function() {
-        var text = $(this).text();
+        var id = $(this).data('id');
         var addresses = JSON.parse(window.localStorage.getItem('addresses'));
         var address = _.find(addresses, function(addr) {
-            return addr.original_address == text || addr.corrected_address == text;
+            return addr.id == id;
         });
-        console.log(text);
-        console.log(address)
         return '<pre>' + prettifyAddressJson(JSON.stringify(address)) + '</pre>';
     },
     trigger: 'hover'
@@ -163,9 +164,10 @@ function initAddress(address) {
 function loadAddressAndTagger(address) {
     var addresses = JSON.parse(window.localStorage.getItem('addresses'));
     var addr = _.find(addresses, function(addr) {
-        return addr.original_address == address || addr.corrected_address == address;
+        return addr.id == address.id
     });
-    initAddress(address);
+    var addressValue = address.corrected_address ? address.corrected_address : address.original_address;
+    initAddress(addressValue);
     reset();
     if (addr.tags.length) {
         var count = 0;
@@ -266,7 +268,7 @@ function previewTaggingResult() {
 
 function submitTaggingResult(address) {
     var addresses = JSON.parse(window.localStorage.getItem('addresses'));
-    if (!STATE.editingAddress) {
+    if (_.isEmpty(STATE.editingAddress)) {
         return;
     }
     var segmentation = getSegementation();
@@ -278,14 +280,14 @@ function submitTaggingResult(address) {
         return;
     }
     var matchedAddress = _.find(addresses, function(addr) {
-        return addr.original_address == address || addr.corrected_address == address;
+        return addr.id === address.id;
     });
     var index = _.indexOf(addresses, matchedAddress);
     var updateAddress = _.extend(matchedAddress, {
         tags: tags,
         segmentation: segmentation
     });
-    if (address === matchedAddress.original_address) {
+    if (_.isEqual(address, matchedAddress)) {
         updateAddress.corrected_address = '';
     }
     addresses.splice(index, 1, updateAddress);
@@ -318,7 +320,7 @@ window.onload = function() {
     fileInput.addEventListener('change', function(e) {
         var file = fileInput.files[0];
         var textType = /text.*/;
-
+        window.localStorage.setItem('filename', file.name.substr(0, file.name.lastIndexOf('.')));
         if (file.type.match(textType)) {
             var reader = new FileReader();
 
@@ -337,8 +339,8 @@ window.onload = function() {
 
     jsonInput.addEventListener('change', function(e) {
         var file = jsonInput.files[0];
-
-        if (file.type === 'application/json') {
+        window.localStorage.setItem('filename', file.name.substr(0, file.name.lastIndexOf('.')));
+        if (file.name.endsWith('.json')) {
             var reader = new FileReader();
 
             reader.onload = function(e) {
@@ -379,20 +381,22 @@ function saveFileStorage(file) {
     window.localStorage.setItem('addresses', JSON.stringify(addresses));
 }
 //纠正地址写入
-function saveCorrectedAddressToStorage(originalAddress, correctedAddress) {
+function saveCorrectedAddressToStorage(originalAddress, correctedAddressValue) {
     var addresses = JSON.parse(window.localStorage.getItem('addresses'));
-    var matchedAddress = _.find(addresses, function(addr){
-    	return addr.original_address==originalAddress || addr.corrected_address==originalAddress
+    var matchedAddress = _.find(addresses, function(addr) {
+        return addr.id === originalAddress.id
     });
     var index = _.indexOf(addresses, matchedAddress);
-    addresses.splice(index, 1, {
+    var correctedAddress = {
         id: matchedAddress.id ? matchedAddress.id : '',
         original_address: matchedAddress.original_address,
-        corrected_address: correctedAddress===matchedAddress.original_address?'':correctedAddress,
+        corrected_address: correctedAddressValue === matchedAddress.original_address ? '' : correctedAddressValue,
         tags: [],
         segmentation: []
-    });
+    };
+    addresses.splice(index, 1, correctedAddress);
     window.localStorage.setItem('addresses', JSON.stringify(addresses));
+    return correctedAddress;
 }
 //加载缓存
 function loadFileStorage() {
@@ -404,9 +408,9 @@ function loadFileStorage() {
     $.each(addresses, function(i, e) {
         var addr = e.corrected_address ? e.corrected_address : e.original_address;
         if (e.tags.length) {
-            $('#candidates tbody').append('<tr><td class="tagged">' + addr + '</td></tr>');
+            $('#candidates tbody').append('<tr><td data-id="' + e.id + '" class="tagged">' + addr + '</td></tr>');
         } else {
-            $('#candidates tbody').append('<tr><td>' + addr + '</td></tr>');
+            $('#candidates tbody').append('<tr><td data-id="' + e.id + '">' + addr + '</td></tr>');
         }
     });
     var lastUntaggedAddress = _.find(addresses, function(x) {
@@ -417,7 +421,7 @@ function loadFileStorage() {
     }));
     $('#candidates tbody tr').eq(currentIndex).find('td').addClass('editing');
     initAddress(lastUntaggedAddress.corrected_address ? lastUntaggedAddress.corrected_address : lastUntaggedAddress.original_address);
-    STATE.editingAddress = lastUntaggedAddress.original_address;
+    STATE.editingAddress = lastUntaggedAddress;
 }
 
 //导出JSON
@@ -429,7 +433,9 @@ function exportJson() {
     });
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
-    a.download = "addresses.json";
+    var filename = window.localStorage.getItem('filename');
+    filename = filename ? filename : 'addresses';
+    a.download = filename + ".json";
     a.href = url;
     var evt = document.createEvent('MouseEvents');
     evt.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
