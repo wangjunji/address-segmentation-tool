@@ -146,9 +146,13 @@ var OPTION = {
         label: '送件要求描述',
         hotkey: 'm'
     },{
+        value: 'D-P',
+        label: '人名',
+        hotkey: ','
+    },{
         value: 'D-O',
         label: '描述其他字符',
-        hotkey: ','
+        hotkey: '.'
     }, {
         value: 'SEP',
         label: '有效分隔字符',
