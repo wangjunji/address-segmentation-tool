@@ -346,7 +346,7 @@ window.onload = function() {
                 loadFileStorage();
                 reset();
             }
-            reader.readAsText(file, 'gb2312');
+            reader.readAsText(file);
         } else {
             alert("格式不支持!");
         }
