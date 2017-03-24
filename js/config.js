@@ -118,41 +118,41 @@ var OPTION = {
         label: '其他POI',
         hotkey: '\''
     }, {
-        value: 'D-DP',
+        value: 'D-DIR-PRE',
         label: '方位描述前缀',
         hotkey: 'z'
     }, {
-        value: 'D-DS',
-        label: '方位描述后缀',
+        value: 'D-DIR-MID',
+        label: '方位描述连接词',
         hotkey: 'x'
     }, {
-        value: 'D-COR',
-        label: '交叉路口',
+        value: 'D-DIR-SUF',
+        label: '方位描述后缀',
         hotkey: 'c'
+    }, {
+        value: 'D-DIR-RD',
+        label: '方位描述路名',
+        hotkey: 'v'
+    },{
+        value: 'D-DIR-POI',
+        label: '方位描述POI',
+        hotkey: 'b'
     }, {
         value: 'D-T',
         label: '送件时间描述',
-        hotkey: 'v'
-    }, {
-        value: 'D-REQ',
-        label: '送件要求描述',
-        hotkey: 'b'
-    }, {
-        value: 'D-RD',
-        label: '补充描述路名',
         hotkey: 'n'
     }, {
-        value: 'D-POI',
-        label: '补充描述POI',
+        value: 'D-R',
+        label: '送件要求描述',
         hotkey: 'm'
-    }, {
+    },{
         value: 'D-O',
         label: '描述其他字符',
         hotkey: ','
     }, {
         value: 'SEP',
-        label: '分隔字符',
+        label: '有效分隔字符',
         hotkey: '/',
-        autocomplete:['，','(',')']
+        autocomplete:['，','（','）','(',')']
     }]
 };
