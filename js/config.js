@@ -43,7 +43,7 @@ var OPTION = {
         autocomplete:['弄']
     }, {
         value: 'L10',
-        label: '门牌号',
+        label: '路号',
         hotkey: 'o',
         autocomplete:['号']
     }, {
