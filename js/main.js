@@ -416,12 +416,14 @@ function loadFileStorage() {
     var lastUntaggedAddress = _.find(addresses, function(x) {
         return !x.tags.length
     });
-    var currentIndex = _.indexOf(addresses, _.find(addresses, {
-        original_address: lastUntaggedAddress.original_address
-    }));
-    $('#candidates tbody tr').eq(currentIndex).find('td').addClass('editing');
-    initAddress(lastUntaggedAddress.corrected_address ? lastUntaggedAddress.corrected_address : lastUntaggedAddress.original_address);
-    STATE.editingAddress = lastUntaggedAddress;
+    if(lastUntaggedAddress){
+        var currentIndex = _.indexOf(addresses, _.find(addresses, {
+            original_address: lastUntaggedAddress.original_address
+        }));
+        $('#candidates tbody tr').eq(currentIndex).find('td').addClass('editing');
+        initAddress(lastUntaggedAddress.corrected_address ? lastUntaggedAddress.corrected_address : lastUntaggedAddress.original_address);
+        STATE.editingAddress = lastUntaggedAddress;
+    }
 }
 
 //导出JSON
