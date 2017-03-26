@@ -53,17 +53,17 @@ var OPTION = {
         autocomplete:['楼','栋','幢','座']
     }, {
         value: 'L12',
-        label: '单元',
-        hotkey: ''
+        label: '单元／小区门牌',
+        hotkey: '['
     }, {
         value: 'L13',
         label: '层',
-        hotkey: '[',
+        hotkey: ']',
         autocomplete:['层','F','f']
     }, {
         value: 'L14',
         label: '房／室',
-        hotkey: ']',
+        hotkey: '\\',
         autocomplete:['室']
     }, {
         value: 'P-ORG',
