@@ -64,7 +64,14 @@ var OPTION = {
         value: 'L14',
         label: '房／室',
         hotkey: '\\',
-        autocomplete:['室']
+    }, {
+        value: 'L15',
+        label: '组／对',
+        hotkey: '',
+    }, {
+        value: 'L16',
+        label: '支门牌',
+        hotkey: '',
     }, {
         value: 'P-ORG',
         label: '企业单位',
@@ -101,15 +108,42 @@ var OPTION = {
         hotkey: 'j'
     }, {
         value: 'P-PUB',
-        label: '公共设施',
+        label: '基础设施',
         hotkey: 'k',
         autocomplete:['站']
     }, {
-        value: 'P-SHO',
-        label: '店铺门面',
-        hotkey: 'l',
-        autocomplete:['店']
+        value: 'P-FIN',
+        label: '银行金融',
+        hotkey: ''
     }, {
+        value: 'P-RES',
+        label: '美食',
+        hotkey: '',
+    }, {
+        value: 'P-LIF',
+        label: '生活服务',
+        hotkey: '',
+    }, {
+        value: 'P-ENT',
+        label: '娱乐休闲',
+        hotkey: ''
+    }, {
+        value: 'P-CAR',
+        label: '汽车',
+        hotkey: ''
+    },{
+        value: 'P-TOU',
+        label: '旅游景点',
+        hotkey: ''
+    },{
+        value: 'P-VEN',
+        label: '文化场馆',
+        hotkey: ''
+    },{
+        value: 'P-DEP',
+        label: '部门科室',
+        hotkey: ''
+    },{
         value: 'P-SUB',
         label: '附属POI',
         hotkey: ';'
