@@ -99,7 +99,7 @@ var OPTION = {
         autocomplete:['厦']
     }, {
         value: 'P-MAL',
-        label: '购物商场',
+        label: '购物',
         hotkey: 'h',
         autocomplete:['场']
     }, {
